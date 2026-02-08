@@ -1,0 +1,14 @@
+Industry standard steps for Project Development
+
+1-Problem Definition
+2-Requirements
+3-User stories
+4-System design
+5-Data design
+6-Tech decision
+7-MVP Scope
+8-Implementation
+9-Testing
+10-Deployment
+11-Monitoring
+12-Iteration
