@@ -1,0 +1,11 @@
+{
+  "name": "@autosenseai/typescript-config",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Shared TypeScript configuration for AutoSenseAI monorepo",
+  "files": [
+    "base.json",
+    "nextjs.json",
+    "nestjs.json"
+  ]
+}
