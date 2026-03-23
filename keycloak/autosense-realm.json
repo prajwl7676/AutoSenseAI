@@ -1,0 +1,55 @@
+{
+  "realm": "autosense",
+  "enabled": true,
+  "displayName": "AutoSenseAI",
+  "loginWithEmailAllowed": true,
+  "registrationAllowed": false,
+  "accessTokenLifespan": 300,
+  "ssoSessionMaxLifespan": 36000,
+  "roles": {
+    "realm": [
+      { "name": "admin", "description": "System administrator with full access" },
+      { "name": "fleet_manager", "description": "Manages vehicles, fleets, and maintenance schedules" },
+      { "name": "mechanic", "description": "Views diagnostics and resolves maintenance tasks" },
+      { "name": "viewer", "description": "Read-only access to dashboards" }
+    ]
+  },
+  "clients": [
+    {
+      "clientId": "autosense-web",
+      "name": "AutoSenseAI Web",
+      "enabled": true,
+      "publicClient": false,
+      "secret": "autosense-web-secret",
+      "standardFlowEnabled": true,
+      "directAccessGrantsEnabled": false,
+      "redirectUris": [
+        "http://localhost:3000/*",
+        "http://localhost:3000/api/auth/callback/keycloak"
+      ],
+      "webOrigins": ["http://localhost:3000"],
+      "protocol": "openid-connect",
+      "attributes": {
+        "pkce.code.challenge.method": "S256"
+      }
+    }
+  ],
+  "users": [
+    {
+      "username": "admin",
+      "email": "admin@autosense.dev",
+      "firstName": "Admin",
+      "lastName": "User",
+      "enabled": true,
+      "emailVerified": true,
+      "credentials": [
+        {
+          "type": "password",
+          "value": "Admin1234!",
+          "temporary": false
+        }
+      ],
+      "realmRoles": ["admin"]
+    }
+  ]
+}

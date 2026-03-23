@@ -1,17 +1,22 @@
-version: "3.9"
-
 services:
   web:
     build:
       context: .
       dockerfile: apps/web/Dockerfile
     ports:
-      - "3000:3000"
+      - '3000:3000'
     environment:
       - NODE_ENV=production
       - NEXT_PUBLIC_API_URL=http://api:3001
+      - AUTH_URL=http://localhost:3000
+      - AUTH_SECRET=${AUTH_SECRET}
+      - AUTH_KEYCLOAK_ID=autosense-web
+      - AUTH_KEYCLOAK_SECRET=${KEYCLOAK_CLIENT_SECRET:-autosense-web-secret}
+      - AUTH_KEYCLOAK_ISSUER=http://keycloak:8080/realms/autosense
     depends_on:
       api:
+        condition: service_healthy
+      keycloak:
         condition: service_healthy
     networks:
       - app-network
@@ -21,18 +26,22 @@ services:
       context: .
       dockerfile: apps/api/Dockerfile
     ports:
-      - "3001:3001"
+      - '3001:3001'
     environment:
       - NODE_ENV=production
       - DATABASE_URL=postgres://postgres:postgres@postgres:5432/autosense
       - REDIS_URL=redis://redis:6379
+      - KEYCLOAK_JWKS_URI=http://keycloak:8080/realms/autosense/protocol/openid-connect/certs
+      - KEYCLOAK_ISSUER=http://keycloak:8080/realms/autosense
     depends_on:
       postgres:
         condition: service_healthy
       redis:
         condition: service_healthy
+      keycloak:
+        condition: service_healthy
     healthcheck:
-      test: ["CMD", "node", "-e", "require('http').get('http://localhost:3001/health', (r) => {if (r.statusCode !== 200) throw new Error(r.statusCode)})"]
+      test: ['CMD', 'wget', '--spider', '-q', 'http://localhost:3001/']
       interval: 10s
       timeout: 5s
       retries: 5
@@ -47,11 +56,12 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: autosense
     ports:
-      - "5432:5432"
+      - '5432:5432'
     volumes:
       - pgdata:/var/lib/postgresql/data
+      - ./postgres-init:/docker-entrypoint-initdb.d
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      test: ['CMD-SHELL', 'pg_isready -U postgres']
       interval: 10s
       timeout: 5s
       retries: 5
@@ -62,14 +72,41 @@ services:
     image: redis:7-alpine
     restart: always
     ports:
-      - "6379:6379"
+      - '6379:6379'
     volumes:
       - redisdata:/data
     healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
+      test: ['CMD', 'redis-cli', 'ping']
       interval: 10s
       timeout: 5s
       retries: 5
+    networks:
+      - app-network
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.1
+    command: start-dev --import-realm
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://postgres:5432/keycloak
+      KC_DB_USERNAME: postgres
+      KC_DB_PASSWORD: postgres
+      KC_HEALTH_ENABLED: 'true'
+    ports:
+      - '8080:8080'
+    volumes:
+      - ./keycloak:/opt/keycloak/data/import
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ['CMD-SHELL', 'curl -sf http://localhost:8080/health || exit 1']
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 120s
     networks:
       - app-network
 

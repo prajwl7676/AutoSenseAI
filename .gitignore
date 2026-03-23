@@ -5,7 +5,7 @@ node_modules/
 **/node_modules/
 /.pnp
 .pnp.js
-
+D:\FAANG\PROJECTS\AutoSenseAI\packages\eslint-config\node_modules
 # testing
 /coverage
 
@@ -35,3 +35,4 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+nul
