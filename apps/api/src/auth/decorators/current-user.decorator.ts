@@ -1,5 +1,6 @@
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
 import { AuthUser } from '../types/user.types';
+import { Request } from 'express';
 
 /**
  * Injects the authenticated user into a controller method parameter.
@@ -12,7 +13,9 @@ import { AuthUser } from '../types/user.types';
  */
 export const CurrentUser = createParamDecorator(
   (_data: unknown, ctx: ExecutionContext): AuthUser => {
-    const request = ctx.switchToHttp().getRequest();
+    const request = ctx
+      .switchToHttp()
+      .getRequest<Request & { user: AuthUser }>();
     return request.user;
   },
 );

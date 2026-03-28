@@ -32,7 +32,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
    * Called after signature verification.
    * The returned value is attached to request.user.
    */
-  async validate(payload: Record<string, unknown>): Promise<AuthUser> {
+  validate(payload: Record<string, unknown>): AuthUser {
     return {
       sub: payload.sub as string,
       email: payload.email as string,
