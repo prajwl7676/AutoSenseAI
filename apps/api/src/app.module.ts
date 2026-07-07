@@ -6,6 +6,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { FleetModule } from './fleet/fleet.module';
+import { TelemetryModule } from './telemetry/telemetry.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { FleetModule } from './fleet/fleet.module';
     }),
     AuthModule,
     FleetModule,
+    TelemetryModule,
   ],
   controllers: [AppController],
   providers: [AppService],
