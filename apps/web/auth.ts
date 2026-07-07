@@ -10,7 +10,21 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     }),
   ],
 
+  // Tell NextAuth where to send unauthenticated users.
+  // Using the built-in route causes it to immediately forward to Keycloak
+  // (only one provider configured = no provider-selection screen shown).
+  pages: {
+    signIn: '/api/auth/signin',
+  },
+
   callbacks: {
+    /**
+     * Determine if the user is authorized to access a route.
+     * Returning false will trigger a redirect to the Keycloak login page.
+     */
+    authorized({ auth }) {
+      return !!auth;
+    },
     /**
      * Persist the Keycloak access_token and roles into the NextAuth JWT.
      * This runs on every sign-in and on every session refresh.
@@ -25,7 +39,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         // Decode the access token to extract Keycloak realm roles.
         try {
           const payload = JSON.parse(
-            Buffer.from(account.access_token.split('.')[1], 'base64').toString(),
+            Buffer.from(account.access_token.split('.')[1], 'base64').toString()
           );
           token.roles = (payload?.realm_access?.roles as string[]) ?? [];
         } catch {

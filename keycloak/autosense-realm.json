@@ -9,7 +9,10 @@
   "roles": {
     "realm": [
       { "name": "admin", "description": "System administrator with full access" },
-      { "name": "fleet_manager", "description": "Manages vehicles, fleets, and maintenance schedules" },
+      {
+        "name": "fleet_manager",
+        "description": "Manages vehicles, fleets, and maintenance schedules"
+      },
       { "name": "mechanic", "description": "Views diagnostics and resolves maintenance tasks" },
       { "name": "viewer", "description": "Read-only access to dashboards" }
     ]
@@ -28,10 +31,7 @@
         "http://localhost:3000/api/auth/callback/keycloak"
       ],
       "webOrigins": ["http://localhost:3000"],
-      "protocol": "openid-connect",
-      "attributes": {
-        "pkce.code.challenge.method": "S256"
-      }
+      "protocol": "openid-connect"
     }
   ],
   "users": [
