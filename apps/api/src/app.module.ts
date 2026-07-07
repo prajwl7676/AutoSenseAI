@@ -5,6 +5,7 @@ import { CacheModule } from '@nestjs/cache-manager';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
+import { FleetModule } from './fleet/fleet.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { AuthModule } from './auth/auth.module';
       url: process.env.REDIS_URL || 'redis://redis:6379',
     }),
     AuthModule,
+    FleetModule,
   ],
   controllers: [AppController],
   providers: [AppService],
