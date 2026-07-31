@@ -1,17 +1,21 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
 import { TelemetryReading } from '../fleet/entities/telemetry-reading.entity';
 import { Vehicle } from '../fleet/entities/vehicle.entity';
+import { RiskScoringService } from '../risk/risk-scoring.service';
 import { IngestTelemetryDto } from './dto/ingest-telemetry.dto';
 
 @Injectable()
 export class TelemetryService {
+  private readonly logger = new Logger(TelemetryService.name);
+
   constructor(
     @InjectRepository(TelemetryReading)
     private readonly readingRepo: Repository<TelemetryReading>,
     @InjectRepository(Vehicle)
     private readonly vehicleRepo: Repository<Vehicle>,
+    private readonly riskScoring: RiskScoringService,
   ) {}
 
   async ingest(dto: IngestTelemetryDto): Promise<{ ingested: number }> {
@@ -37,6 +41,14 @@ export class TelemetryService {
       }),
     );
     await this.readingRepo.insert(rows);
+
+    // Re-score off the ingest path; never fail ingestion on a scoring error.
+    void this.riskScoring.computeForVehicles(vehicleIds).catch((err) => {
+      this.logger.error(
+        `Risk scoring after ingest failed: ${(err as Error).message}`,
+      );
+    });
+
     return { ingested: rows.length };
   }
 

@@ -7,6 +7,7 @@ import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { FleetModule } from './fleet/fleet.module';
 import { TelemetryModule } from './telemetry/telemetry.module';
+import { RiskModule } from './risk/risk.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { TelemetryModule } from './telemetry/telemetry.module';
     AuthModule,
     FleetModule,
     TelemetryModule,
+    RiskModule,
   ],
   controllers: [AppController],
   providers: [AppService],

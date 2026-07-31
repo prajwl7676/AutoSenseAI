@@ -7,8 +7,10 @@ import { Alert } from './entities/alert.entity';
 import { MaintenanceLog } from './entities/maintenance-log.entity';
 import { FleetController } from './fleet.controller';
 import { VehicleController } from './vehicle.controller';
+import { AlertController } from './alert.controller';
 import { FleetService } from './fleet.service';
 import { VehicleService } from './vehicle.service';
+import { AlertService } from './alert.service';
 
 @Module({
   imports: [
@@ -20,8 +22,8 @@ import { VehicleService } from './vehicle.service';
       MaintenanceLog,
     ]),
   ],
-  controllers: [FleetController, VehicleController],
-  providers: [FleetService, VehicleService],
-  exports: [TypeOrmModule, FleetService, VehicleService],
+  controllers: [FleetController, VehicleController, AlertController],
+  providers: [FleetService, VehicleService, AlertService],
+  exports: [TypeOrmModule, FleetService, VehicleService, AlertService],
 })
 export class FleetModule {}
